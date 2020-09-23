@@ -39,8 +39,12 @@ async function runNodeFileAndReturnPromise(filePath: string, options?: Options):
     filePath = path.resolve(filePath);
     const executionPath = options && options.executionPath || 'node';
     let res = await execute(executionPath, [filePath], options);
-    if (res.exitCode != 0) {
+    if(res.signal === 'SIGTERM'){ //probably timeout or killed by SO somehow
+        res.errorType = 'run-timeout';
+    }
+    else if (res.signal === 'SIGSEGV') { //probably seg fault and other memory/pagination issues
         res.errorType = 'run-time';
     }
+    
     return res;
 }
