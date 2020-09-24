@@ -1,3 +1,12 @@
+export enum ErrorType{
+    COMPILE_TIME = 'compile-time',
+    RUN_TIME = 'run-time',
+    PRE_COMPILE_TIME = 'pre-compile-time',
+    RUN_TIMEOUT = 'run-timeout',
+    RUN_STDOUT_OVERFLOW = 'run-stdout-overflow',
+    RUN_STDERR_OVERFLOW = 'run-stderr-overflow'
+}
+
 export interface Result {
     stdout: string;
     stderr: string;
@@ -15,5 +24,6 @@ export interface Result {
      * Signal resulting, if any, resulting from the code execution
     */
     signal: string;
-    errorType?: 'compile-time' | 'run-time' | 'pre-compile-time' | 'run-timeout';
+    
+    errorType?: ErrorType;
 }
