@@ -54,7 +54,6 @@ process.on('message', (msg: ReceivedMessage) => {
                 return result;
             })
             .then((result: string[]) => {
-                console.log(`error type ${errorType}`)
                 let res : Result = {
                     stderr: result[0].slice(0,msg.stderrLimit),
                     stdout: result[1].slice(0,msg.stdoutLimit),
