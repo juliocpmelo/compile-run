@@ -1,7 +1,7 @@
 import { spawn, ChildProcess } from 'child_process';
 import { writeToStdin } from '../sdtin-write';
 import { streamDataToString } from '../stream-to-string';
-import { Result } from '../types';
+import { Result, ErrorType } from '../types';
 
 interface ReceivedMessage {
     cmd: string;
@@ -20,23 +20,31 @@ process.on('message', (msg: ReceivedMessage) => {
 
     //write to stdin
     writeToStdin(cp, msg.stdin);
-    let killTimerId = setTimeout(() => {
-        cp.kill();
-    }, msg.timeout);
+    
     let resultPromise: Promise<string>[] = [];
     resultPromise.push((streamDataToString(cp.stderr)));
     resultPromise.push(streamDataToString(cp.stdout));
     let pr = Promise.all(resultPromise);
     let stdoutSize = 0, stdoutErrSize = 0;
+    let errorType : ErrorType;
+
+    let killTimerId = setTimeout(() => {
+        cp.kill();
+        errorType = ErrorType.RUN_TIMEOUT;
+    }, msg.timeout);
     cp.stdout.on('data', (data : string) => {
         stdoutSize += data.length;
-        if(stdoutSize > msg.stdoutLimit)
+        if(stdoutSize > msg.stdoutLimit){
             cp.kill();
+            errorType = ErrorType.RUN_STDOUT_OVERFLOW;
+        }
     });
     cp.stderr.on('data', (data : string) => {
         stdoutErrSize += data.length;
-        if(stdoutErrSize > msg.stderrLimit)
+        if(stdoutErrSize > msg.stderrLimit){
             cp.kill();
+            errorType = ErrorType.RUN_STDERR_OVERFLOW;
+        }
     });
     cp.on('close', (exitCode,signal) => {
         let memUsage = process.memoryUsage();
@@ -46,13 +54,17 @@ process.on('message', (msg: ReceivedMessage) => {
                 return result;
             })
             .then((result: string[]) => {
-                let res = {
+                console.log(`error type ${errorType}`)
+                let res : Result = {
                     stderr: result[0].slice(0,msg.stderrLimit),
                     stdout: result[1].slice(0,msg.stdoutLimit),
                     exitCode: exitCode,
                     signal: signal,
                     memoryUsage: memUsage.rss - initialMemUsage.rss,
                     cpuUsage: process.cpuUsage(initialCPUUsage).user
+                }
+                if(errorType){
+                    res.errorType = errorType;
                 }
                 return res;
             })
