@@ -1,4 +1,4 @@
-import { Options } from "../types";
+import { Options, ErrorType } from "../types";
 import { getFileName } from "../source-writer";
 import { getExecutableExt } from "../executable/executable-ext";
 import { tmpPath, checkExistsAndMakeDir } from "../init";
@@ -21,7 +21,7 @@ export async function compileC(filePath: string, options?: Options): Promise<str
     let executablePath = path.join(cPath, executableName);
     let res = await execute(compilationPath, [filePath, '-o', executablePath, compilerArgs], { timeout: compileTimeout });
     if (res.exitCode !== 0) {
-        res.errorType = 'compile-time';
+        res.errorType = ErrorType.COMPILE_TIME;
         throw res;
     }
     return executablePath;

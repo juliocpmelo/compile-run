@@ -1,4 +1,4 @@
-import { Options } from "../types";
+import { Options, ErrorType } from "../types";
 import { execute } from '../execute-command';
 import path from 'path';
 
@@ -15,7 +15,7 @@ export async function compileJava(filePath: string, options?: Options): Promise<
     });
 
     if (res.exitCode !== 0) {
-        res.errorType = 'compile-time';
+        res.errorType = ErrorType.COMPILE_TIME;
         throw res;
     }
     let basename = path.basename(filePath);

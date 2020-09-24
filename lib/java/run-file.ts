@@ -1,4 +1,4 @@
-import { Result, Options, errorResultCallback } from "../types";
+import { Result, ErrorType, Options, errorResultCallback } from "../types";
 import { multipleArgsCallbackifier } from "../helper";
 import { compileJavaFile } from "./compile-file";
 import { execute } from "../execute-command";
@@ -37,8 +37,12 @@ export async function runJavaFileAndReturnPromise(filePath: string, options?: Op
         let [className] = path.basename(classFilePath).split('.');
         const executionPath = options && options.executionPath || 'java';
         let res = await execute(executionPath, ['-classpath', classPath, className], options);
-        if (res.stderr) {
-            res.errorType = 'run-time';
+        if(res.signal === 'SIGTERM'){ //probably timeout or killed by SO somehow
+            if(!res.errorType)
+                res.errorType = ErrorType.RUN_TIME;
+        }
+        else if (res.signal === 'SIGSEGV') { //probably seg fault and other memory/pagination issues
+            res.errorType = ErrorType.RUN_TIME;
         }
         return res;
     }

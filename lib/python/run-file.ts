@@ -1,4 +1,4 @@
-import { errorResultCallback, Result, Options } from "../types";
+import { errorResultCallback, Result, ErrorType, Options } from "../types";
 import path from 'path';
 import { multipleArgsCallbackifier } from "../helper";
 import { execute } from "../execute-command";
@@ -40,10 +40,11 @@ async function runPythonFileAndReturnPromise(filePath: string, options?: Options
     const executionPath = options && options.executionPath || 'python';
     let res = await execute(executionPath, [filePath], options);
     if(res.signal === 'SIGTERM'){ //probably timeout or killed by SO somehow
-        res.errorType = 'run-timeout';
+        if(!res.errorType)
+            res.errorType = ErrorType.RUN_TIME;
     }
     else if (res.signal === 'SIGSEGV') { //probably seg fault and other memory/pagination issues
-        res.errorType = 'run-time';
+        res.errorType = ErrorType.RUN_TIME;
     }
     return res;
 }

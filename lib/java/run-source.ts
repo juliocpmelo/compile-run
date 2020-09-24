@@ -1,4 +1,4 @@
-import { Result, Options, errorResultCallback } from "../types";
+import { Result, ErrorType, Options, errorResultCallback } from "../types";
 import { multipleArgsCallbackifier } from "../helper";
 import { compileJavaSource } from "./compile-source";
 import { execute } from "../execute-command";
@@ -38,7 +38,7 @@ export async function runJavaSourceAndReturnPromise(filePath: string, options?: 
         const executionPath = options && options.executionPath || 'java';
         let res = await execute(executionPath, ['-classpath', classPath, className], options);
         if (res.stderr) {
-            res.errorType = 'run-time';
+            res.errorType = ErrorType.RUN_TIME;
         }
         return res;
     }

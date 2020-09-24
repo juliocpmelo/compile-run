@@ -1,4 +1,4 @@
-import { Options, Result } from "../types";
+import { Options, Result, ErrorType } from "../types";
 import { execute } from "../execute-command";
 
 /**
@@ -9,10 +9,11 @@ import { execute } from "../execute-command";
 export async function runExecutable(filePath: string, options?: Options): Promise<Result> {
   let res = await execute(filePath, options);
   if (res.signal === 'SIGSEGV') { //probably seg fault and other memory/pagination issues
-    res.errorType = 'run-time';
+    res.errorType = ErrorType.RUN_TIME;
   }
   else if(res.signal === 'SIGTERM'){ //probably timeout or killed by SO somehow
-    res.errorType = 'run-timeout';
+    if(!res.errorType)
+      res.errorType = ErrorType.RUN_TIME;
   }
   return res;
 }

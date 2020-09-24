@@ -1,4 +1,4 @@
-import { Options } from "../types";
+import { Options, ErrorType } from "../types";
 import { getFileName } from "../source-writer";
 import { getExecutableExt } from "../executable/executable-ext";
 import { tmpPath, checkExistsAndMakeDir } from "../init";
@@ -13,14 +13,14 @@ import { execute } from "../execute-command";
 export async function compileCpp(filePath: string, options?: Options): Promise<string> {
     let compileTimeout = options && options.compileTimeout || 3000;
     let executableExt = getExecutableExt();
-    const compilationPath: string = options && options.compilationPath || 'gcc';
+    const compilationPath: string = options && options.compilationPath || 'g++';
     let cppPath = path.join(tmpPath, 'cpp');
     checkExistsAndMakeDir(cppPath);
     let executableName = getFileName(executableExt);
     let executablePath = path.join(cppPath, executableName);
     let res = await execute(compilationPath, [filePath, '-o', executablePath, '-lstdc++'], { timeout: compileTimeout });
     if (res.exitCode !== 0) {
-        res.errorType = 'compile-time';
+        res.errorType = ErrorType.COMPILE_TIME;
         throw res;
     }
     return executablePath;
