@@ -2,7 +2,6 @@ export interface Options {
     timeout?: number;
     stdin?: string;
     compileTimeout?: number;
-    
     /**
      * Limit the ammount of characters of program's stderr, default is 1000
      */
@@ -29,5 +28,8 @@ export interface Options {
      */
     compilerArgs?: string;
 
-    
+    /*
+    * set to true if you want to run with debugger. Debugger will produce the debuggerReportFile in the results object
+    */
+    debugger?: boolean;
 }
