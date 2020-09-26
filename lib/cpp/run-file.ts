@@ -1,7 +1,7 @@
 import { Result, Options, errorResultCallback } from "../types";
 import { multipleArgsCallbackifier } from "../helper";
 import { compileCpp } from "./compile-file";
-import { runExecutable } from "../executable/execute-executable";
+import { runExecutable, runExecutableWithDebugger } from "../executable/execute-executable";
 
 /**
  * Runs a Cpp file on a given path and 
@@ -32,7 +32,14 @@ export async function runCppFile(filePath: string, ...args: any[]): Promise<Resu
 export async function runCppFileAndReturnPromise(filePath: string, options?: Options): Promise<Result> {
     try {
         let executablePath = await compileCpp(filePath, options);
-        return runExecutable(executablePath, options);
+        if(options){
+            if(options.debugger &&  options.debugger === true)
+                return runExecutableWithDebugger(executablePath, options);
+            else
+                return runExecutable(executablePath, options);
+        }
+        else 
+            return runExecutable(executablePath, options);
     }
     catch (err) {
         return err;

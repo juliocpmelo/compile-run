@@ -16,6 +16,7 @@ interface ReceivedMessage {
 process.on('message', (msg: ReceivedMessage) => {
     let initialCPUUsage = process.cpuUsage();
     let initialMemUsage = process.memoryUsage();
+    console.log(`running ${msg.cmd} with ${msg.arguments}`);
     let cp: ChildProcess = spawn(msg.cmd, msg.arguments,);
 
     //write to stdin
@@ -29,20 +30,20 @@ process.on('message', (msg: ReceivedMessage) => {
     let errorType : ErrorType;
 
     let killTimerId = setTimeout(() => {
-        cp.kill();
+        cp.kill('SIGINT');
         errorType = ErrorType.RUN_TIMEOUT;
     }, msg.timeout);
     cp.stdout.on('data', (data : string) => {
         stdoutSize += data.length;
         if(stdoutSize > msg.stdoutLimit){
-            cp.kill();
+            cp.kill('SIGINT');
             errorType = ErrorType.RUN_STDOUT_OVERFLOW;
         }
     });
     cp.stderr.on('data', (data : string) => {
         stdoutErrSize += data.length;
         if(stdoutErrSize > msg.stderrLimit){
-            cp.kill();
+            cp.kill('SIGINT');
             errorType = ErrorType.RUN_STDERR_OVERFLOW;
         }
     });

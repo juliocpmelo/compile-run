@@ -19,7 +19,7 @@ export async function compileC(filePath: string, options?: Options): Promise<str
     checkExistsAndMakeDir(cPath);
     let executableName = getFileName(executableExt);
     let executablePath = path.join(cPath, executableName);
-    let res = await execute(compilationPath, [filePath, '-o', executablePath, compilerArgs], { timeout: compileTimeout });
+    let res = await execute(compilationPath, [filePath, '-o', executablePath, compilerArgs,'-g', '-O0'], { timeout: compileTimeout });
     if (res.exitCode !== 0) {
         res.errorType = ErrorType.COMPILE_TIME;
         throw res;

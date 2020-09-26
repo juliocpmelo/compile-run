@@ -14,11 +14,12 @@ export async function compileCpp(filePath: string, options?: Options): Promise<s
     let compileTimeout = options && options.compileTimeout || 3000;
     let executableExt = getExecutableExt();
     const compilationPath: string = options && options.compilationPath || 'g++';
+    const compilerArgs: string = options && options.compilerArgs || '-lm';
     let cppPath = path.join(tmpPath, 'cpp');
     checkExistsAndMakeDir(cppPath);
     let executableName = getFileName(executableExt);
     let executablePath = path.join(cppPath, executableName);
-    let res = await execute(compilationPath, [filePath, '-o', executablePath, '-lstdc++'], { timeout: compileTimeout });
+    let res = await execute(compilationPath, [filePath, '-o', executablePath, compilerArgs, '-g', '-O0'], { timeout: compileTimeout });
     if (res.exitCode !== 0) {
         res.errorType = ErrorType.COMPILE_TIME;
         throw res;
