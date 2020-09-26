@@ -25,5 +25,10 @@ export interface Result {
     */
     signal: string;
     
+    /**
+     * file with debugger repport generated when executing programs in debug mode
+     */
+    debuggerReportFile?: string;
+
     errorType?: ErrorType;
 }
