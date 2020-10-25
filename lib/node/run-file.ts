@@ -1,7 +1,8 @@
-import { errorResultCallback, Result, ErrorType , Options } from "../types";
+import { errorResultCallback, Result, ErrorType } from "../types";
 import path from 'path';
 import { multipleArgsCallbackifier } from "../helper";
 import { execute } from "../execute-command";
+import { Node_Options } from "./node-options";
 
 /**
  * executes the javascript source code in the file at the path provided and give stdout and stderr as result
@@ -9,7 +10,7 @@ import { execute } from "../execute-command";
  * @param options Options object
  * @param callback Optional callback
  */
-export function runNodeFile(filePath: string, options: Options, callback: errorResultCallback): Promise<Result>;
+export function runNodeFile(filePath: string, options: Node_Options, callback: errorResultCallback): Promise<Result>;
 
 /**
  * executes the javascript source code in the file at the path provided and give stdout and stderr as result
@@ -23,7 +24,7 @@ export function runNodeFile(filePath: string, callback: errorResultCallback): Pr
  * @param path A path like string
  * @param options Options object
  */
-export function runNodeFile(filePath: string, options?: Options): Promise<Result>;
+export function runNodeFile(filePath: string, options?: Node_Options): Promise<Result>;
 
 export async function runNodeFile(filePath: string, ...args: any[]): Promise<Result> {
     return multipleArgsCallbackifier<Result>(filePath, runNodeFileAndReturnPromise, ...args);
@@ -34,7 +35,7 @@ export async function runNodeFile(filePath: string, ...args: any[]): Promise<Res
  * @param filePath A path like string
  * @param options 
  */
-async function runNodeFileAndReturnPromise(filePath: string, options?: Options): Promise<Result> {
+async function runNodeFileAndReturnPromise(filePath: string, options?: Node_Options): Promise<Result> {
     //Make the path absolute
     filePath = path.resolve(filePath);
     const executionPath = options && options.executionPath || 'node';

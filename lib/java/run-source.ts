@@ -2,6 +2,7 @@ import { Result, ErrorType, Options, errorResultCallback } from "../types";
 import { multipleArgsCallbackifier } from "../helper";
 import { compileJavaSource } from "./compile-source";
 import { execute } from "../execute-command";
+import { Java_Options } from ".";
 import path from 'path';
 
 /**
@@ -10,7 +11,7 @@ import path from 'path';
  * @param options
  * @param callback
  */
-export function runJavaSource(source: string, options: Options, callback: errorResultCallback): Promise<Result>;
+export function runJavaSource(source: string, options: Java_Options, callback: errorResultCallback): Promise<Result>;
 
 /**
  * Runs a Java source string 
@@ -24,13 +25,13 @@ export function runJavaSource(source: string, callback: errorResultCallback): Pr
  * @param source source string
  * @param options
  */
-export function runJavaSource(source: string, options?: Options): Promise<Result>;
+export function runJavaSource(source: string, options?: Java_Options): Promise<Result>;
 
 export async function runJavaSource(source: string, ...args: any[]): Promise<Result> {
     return multipleArgsCallbackifier<Result>(source, runJavaSourceAndReturnPromise, ...args);
 }
 
-export async function runJavaSourceAndReturnPromise(filePath: string, options?: Options): Promise<Result> {
+export async function runJavaSourceAndReturnPromise(filePath: string, options?: Java_Options): Promise<Result> {
     try {
         let classFilePath = await compileJavaSource(filePath, options);
         let classPath = path.dirname(classFilePath);

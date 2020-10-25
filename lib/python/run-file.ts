@@ -1,7 +1,8 @@
-import { errorResultCallback, Result, ErrorType, Options } from "../types";
+import { errorResultCallback, Result, ErrorType } from "../types";
 import path from 'path';
 import { multipleArgsCallbackifier } from "../helper";
 import { execute } from "../execute-command";
+import { Python_Options } from "./python-options";
 
 /**
  * executes the python source code in the file at the path provided and give stdout and stderr as result
@@ -9,14 +10,14 @@ import { execute } from "../execute-command";
  * @param options Optional Options obj
  * @param callback Optional callback
  */
-export function runPythonFile(filePath: string, options: Options, callback: errorResultCallback): Promise<Result>;
+export function runPythonFile(filePath: string, options: Python_Options, callback: errorResultCallback): Promise<Result>;
 
 /**
  * executes the python source code in the file at the path provided and give stdout and stderr as result
  * @param path A path like string
  * @param options Optional Options obj
  */
-export function runPythonFile(filePath: string, options?: Options): Promise<Result>;
+export function runPythonFile(filePath: string, options?: Python_Options): Promise<Result>;
 
 /**
  * executes the python source code in the file at the path provided and give stdout and stderr as result
@@ -34,7 +35,7 @@ export async function runPythonFile(filePath: string, ...args: any[]): Promise<R
  * @param filePath A path like string
  * @param options 
  */
-async function runPythonFileAndReturnPromise(filePath: string, options?: Options): Promise<Result> {
+async function runPythonFileAndReturnPromise(filePath: string, options?: Python_Options): Promise<Result> {
     //Make the path absolute
     filePath = path.resolve(filePath);
     const executionPath = options && options.executionPath || 'python';
