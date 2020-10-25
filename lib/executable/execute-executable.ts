@@ -12,12 +12,9 @@ import { execute } from "../execute-command";
 /*
 * runs c or cpp compiled files with valgrind and produce a xml output
 */
+/*
 export async function runExecutableWithDebugger(filePath: string, options?: Options): Promise<Result> {
   
-  /*
-  let cmd : string = 'gdb'
-  let args: string[] = ['-batch','-ex','set confirm off','-ex','handle SIGINT stop print pass','-ex', 'run', '-ex', 'bt', '-ex', 'p $_siginfo', filePath];
-  */
   let cmd : string = 'valgrind';
   let repportFile = `${filePath}.valgrind.xml`;
   let args: string[] = ['--leak-check=full', '-q', '--xml=yes', `--xml-file=${repportFile}`, filePath];
@@ -35,7 +32,7 @@ export async function runExecutableWithDebugger(filePath: string, options?: Opti
 
   return res;
 }
-
+*/
 
 export async function runExecutable(filePath: string, options?: Options): Promise<Result> {
   

@@ -1,7 +1,8 @@
 import { Result, Options, errorResultCallback } from "../types";
 import { multipleArgsCallbackifier } from "../helper";
 import { compileC } from "./compile-file";
-import { runExecutableWithDebugger, runExecutable } from "../executable/execute-executable";
+import { runExecutable } from "../executable/execute-executable";
+import { C_Options } from "./c-options"
 
 /**
  * Runs a C file on a given path and 
@@ -29,17 +30,10 @@ export async function runCFile(filePath: string, ...args: any[]): Promise<Result
     return multipleArgsCallbackifier<Result>(filePath, runCFileAndReturnPromise, ...args);
 }
 
-export async function runCFileAndReturnPromise(filePath: string, options?: Options): Promise<Result> {
+export async function runCFileAndReturnPromise(filePath: string, options?: C_Options): Promise<Result> {
     try {
         let executablePath = await compileC(filePath, options);
-        if(options){
-            if(options.debugger &&  options.debugger === true)
-                return runExecutableWithDebugger(executablePath, options);
-            else
-                return runExecutable(executablePath, options);
-        }
-        else 
-            return runExecutable(executablePath, options);
+        return runExecutable(executablePath, options);
     }
     catch (err) {
         return err;

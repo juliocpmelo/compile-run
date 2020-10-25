@@ -10,12 +10,7 @@ export interface Options {
      * Limit the ammount of characters of program's stdout, default is 1000
      */
     stdoutLimit?: number;
-    /**
-     * Path to the compiler like for java=>javac'path, cpp,c=>gcc's path
-     * 
-     * can be a path like string to the compiler or custom command name whose path is already set
-     */
-    compilationPath?: string;
+    
     /**
      * Path to the execution Command like for python,node,java
      * 
@@ -23,13 +18,4 @@ export interface Options {
      * like some people use python3 for python v3.6 and python for python v2.7
      */
     executionPath?: string;
-    /**
-     * Set or compiler args if necessary for the specific language
-     */
-    compilerArgs?: string;
-
-    /*
-    * set to true if you want to run with debugger. Debugger will produce the debuggerReportFile in the results object
-    */
-    debugger?: boolean;
 }
