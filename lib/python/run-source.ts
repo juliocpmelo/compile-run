@@ -1,7 +1,7 @@
 import { errorResultCallback, Result } from "../types";
 import { writeSourceFile } from "../source-writer";
 import { runPythonFile } from "./run-file";
-import { multipleArgsCallbackifier } from "../helper";
+import { multipleArgsCallbackifier } from "../box/util/helper";
 import { Python_Options } from "./python-options";
 
 /**

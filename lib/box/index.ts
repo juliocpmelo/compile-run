@@ -1,23 +1,18 @@
 import { spawn, ChildProcess } from 'child_process';
-import { writeToStdin } from '../sdtin-write';
-import { streamDataToString } from '../stream-to-string';
+import { writeToStdin } from './util/sdtin-write';
+import { streamDataToString } from './util/stream-to-string';
 import { Result, ErrorType } from '../types';
+import { SandboxMessage, ResponseMessage } from './sanbox-messages';
 
-interface ReceivedMessage {
-    cmd: string;
-    timeout: number;
-    stdin: string;
-    stderrLimit: number;
-    stdoutLimit: number;
-    arguments?: string[];
-}
+
 
 // When it receives a message about what command to execute it executes it and returns the result
-process.on('message', (msg: ReceivedMessage) => {
+process.on('message', (msg: SandboxMessage) => {
     let initialCPUUsage = process.cpuUsage();
     let initialMemUsage = process.memoryUsage();
     console.log(`running ${msg.cmd} with ${msg.arguments}`);
-    let cp: ChildProcess = spawn(msg.cmd, msg.arguments,);
+
+    let cp: ChildProcess = spawn(msg.cmd, msg.arguments, {env: msg.envVariables});
 
     //write to stdin
     writeToStdin(cp, msg.stdin);
@@ -69,16 +64,19 @@ process.on('message', (msg: ReceivedMessage) => {
                 return res;
             })
             .then((result: Result) => {
-                process.send && process.send({
+
+                let response : ResponseMessage = {
                     status: 'success',
                     executionResult: result
-                });
+                }
+                process.send && process.send(response);
             })
             .catch(err => {
-                process.send && process.send({
+                let response : ResponseMessage = {
                     status: 'error',
                     error: err
-                });
+                }
+                process.send && process.send(response);
                 clearTimeout(killTimerId);
             });
     });

@@ -1,5 +1,5 @@
 import { Result, Options, errorResultCallback } from "../types";
-import { multipleArgsCallbackifier } from "../helper";
+import { multipleArgsCallbackifier } from "../box/util/helper";
 import { compileCSource } from "./compile-source";
 import { runExecutable } from "../executable/execute-executable";
 

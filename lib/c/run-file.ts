@@ -1,5 +1,5 @@
 import { Result, Options, errorResultCallback } from "../types";
-import { multipleArgsCallbackifier } from "../helper";
+import { multipleArgsCallbackifier } from "../box/util/helper";
 import { compileC } from "./compile-file";
 import { runExecutable } from "../executable/execute-executable";
 import { C_Options } from "./c-options"
@@ -33,6 +33,12 @@ export async function runCFile(filePath: string, ...args: any[]): Promise<Result
 export async function runCFileAndReturnPromise(filePath: string, options?: C_Options): Promise<Result> {
     try {
         let executablePath = await compileC(filePath, options);
+        if (options && options.addressSanitizer){
+            if(options.executionEnvArgs)
+                options.executionEnvArgs.ASAN_OPTIONS = `log_path=${executablePath}.log`;
+            else
+                options.executionEnvArgs = { ASAN_OPTIONS : `log_path=${executablePath}.log` };
+        }
         return runExecutable(executablePath, options);
     }
     catch (err) {

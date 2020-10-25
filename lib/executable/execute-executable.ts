@@ -1,5 +1,5 @@
 import { Options, Result, ErrorType } from "../types";
-import { execute } from "../execute-command";
+import { execute } from "../box/execute-command";
 
 /**
  * Executes an executable

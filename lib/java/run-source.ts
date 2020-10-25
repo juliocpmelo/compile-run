@@ -1,7 +1,7 @@
 import { Result, ErrorType, Options, errorResultCallback } from "../types";
-import { multipleArgsCallbackifier } from "../helper";
+import { multipleArgsCallbackifier } from "../box/util/helper";
 import { compileJavaSource } from "./compile-source";
-import { execute } from "../execute-command";
+import { execute } from "../box/execute-command";
 import { Java_Options } from ".";
 import path from 'path';
 

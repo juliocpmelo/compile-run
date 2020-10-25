@@ -1,5 +1,5 @@
 import { Result, errorResultCallback } from "../types";
-import { multipleArgsCallbackifier } from "../helper";
+import { multipleArgsCallbackifier } from "../box/util/helper";
 import { compileCpp } from "./compile-file";
 import { runExecutable} from "../executable/execute-executable";
 

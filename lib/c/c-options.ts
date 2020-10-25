@@ -21,4 +21,5 @@ export interface C_Options extends Options{
      * can be a path like string to the compiler or custom command name whose path is already set
      */
     compilerPath?: string;
+
 }

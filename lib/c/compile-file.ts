@@ -3,7 +3,7 @@ import { getFileName } from "../source-writer";
 import { getExecutableExt } from "../executable/executable-ext";
 import { tmpPath, checkExistsAndMakeDir } from "../init";
 import path from 'path';
-import { execute } from "../execute-command";
+import { execute } from "../box/execute-command";
 import { C_Options } from "./c-options"
 
 /**

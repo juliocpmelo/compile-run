@@ -1,7 +1,7 @@
 import { errorResultCallback, Result, ErrorType } from "../types";
 import path from 'path';
-import { multipleArgsCallbackifier } from "../helper";
-import { execute } from "../execute-command";
+import { multipleArgsCallbackifier } from "../box/util/helper";
+import { execute } from "../box/execute-command";
 import { Python_Options } from "./python-options";
 
 /**
