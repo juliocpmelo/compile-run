@@ -1,5 +1,10 @@
-import { Options, Result, ErrorType } from "../types";
+import { Result, ErrorType } from "../types";
 import { execute } from "../box/execute-command";
+import { C_Options } from "../c";
+import { CPP_Options } from "../cpp";
+
+const fs = require ("fs");
+
 
 /**
  * Executes an executable
@@ -8,42 +13,17 @@ import { execute } from "../box/execute-command";
  */
 
 
-
-/*
-* runs c or cpp compiled files with valgrind and produce a xml output
-*/
-/*
-export async function runExecutableWithDebugger(filePath: string, options?: Options): Promise<Result> {
-  
-  let cmd : string = 'valgrind';
-  let repportFile = `${filePath}.valgrind.xml`;
-  let args: string[] = ['--leak-check=full', '-q', '--xml=yes', `--xml-file=${repportFile}`, filePath];
-
-  let res = await execute(cmd, args, options);
-  
-  if (res.signal === 'SIGSEGV') { //probably seg fault and other memory/pagination issues
-    res.errorType = ErrorType.RUN_TIME;
-  }
-  else if(res.signal === 'SIGTERM'){ //probably timeout or killed by SO somehow
-    if(!res.errorType)
-      res.errorType = ErrorType.RUN_TIME;
-  }
-  res.debuggerReportFile = repportFile;
-
-  return res;
-}
-*/
-
-export async function runExecutable(filePath: string, options?: Options): Promise<Result> {
+export async function runExecutable(filePath: string, options?: C_Options | CPP_Options): Promise<Result> {
   
   let res = await execute(filePath, options);
   
-  if (res.signal === 'SIGSEGV') { //probably seg fault and other memory/pagination issues
-    res.errorType = ErrorType.RUN_TIME;
-  }
-  else if(res.signal === 'SIGTERM'){ //probably timeout or killed by SO somehow
+  if(res.signal === 'SIGTERM'){ //probably timeout or killed by SO somehow (e.g timeout, bufferoverflow and others)
     if(!res.errorType)
       res.errorType = ErrorType.RUN_TIME;
   }
+  else{ //probably seg fault and other memory/pagination issues (e.g 'SIGSEGV' and others)
+    res.errorType = ErrorType.RUN_TIME;
+  }
+
   return res;
 }
