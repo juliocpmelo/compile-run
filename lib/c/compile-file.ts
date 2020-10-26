@@ -21,13 +21,14 @@ export async function compileC(filePath: string, options?: C_Options): Promise<s
     let executableName = getFileName(executableExt);
     let executablePath = path.join(cPath, executableName);
 
-    const compilerArgs: string[] = [filePath, '-o', executablePath, '-lm'];
+    let compilerArgs: string[] = [filePath, '-o', executablePath, '-lm'];
 
-    if(options && options.addressSanitizer){ //enables address sanitizer, works on both clang and gcc
-        compilerArgs.concat(['-g', '-fsanitize=address']);
-    }
     
-    compilerArgs.concat(options && options.compilerArgs || []);
+    if(options && options.addressSanitizer){ //enables address sanitizer, works on both clang and gcc
+        compilerArgs.push('-g', '-fsanitize=address');
+    }
+    compilerArgs = compilerArgs.concat(options && options.compilerArgs ? options.compilerArgs : []);
+    
     
     let res = await execute(compilationPath, compilerArgs, { timeout: compileTimeout });
     if (res.exitCode !== 0) {
