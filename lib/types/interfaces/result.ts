@@ -20,13 +20,14 @@ export interface Result {
      */
     cpuUsage: number;
 
+
     /** 
      * Signal resulting, if any, resulting from the code execution
     */
     signal: string;
     
     /**
-     * file with debugger repport generated when executing programs in debug mode
+     * file with debugger repport generated when executing programs
      */
     debuggerReportFile?: string;
 
