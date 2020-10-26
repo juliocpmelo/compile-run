@@ -34,10 +34,10 @@ export async function runCFileAndReturnPromise(filePath: string, options?: C_Opt
     try {
         let executablePath = await compileC(filePath, options);
         if (options && options.addressSanitizer){
-            if(options.executionEnvArgs)
-                options.executionEnvArgs.ASAN_OPTIONS = `log_path=${executablePath}.log`;
+            if(options.envVariables)
+                options.envVariables.ASAN_OPTIONS = `log_path=${executablePath}.log`;
             else
-                options.executionEnvArgs = { ASAN_OPTIONS : `log_path=${executablePath}.log` };
+                options.envVariables = { ASAN_OPTIONS : `log_path=${executablePath}.log` };
         }
         return runExecutable(executablePath, options);
     }

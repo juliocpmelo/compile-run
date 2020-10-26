@@ -3,11 +3,9 @@ import { runJavaFile } from './run-file';
 
 import { Java_Options } from './java-options'
 
-export { Java_Options }
-
-export const java = {
+const java = {
     runSource: runJavaSource,
     runFile: runJavaFile
 };
 
-export default java;
+export { java, Java_Options };
