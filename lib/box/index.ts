@@ -1,3 +1,5 @@
+const util = require('util');
+
 import { spawn, ChildProcess } from 'child_process';
 import { writeToStdin } from './util/sdtin-write';
 import { streamDataToString } from './util/stream-to-string';
@@ -6,13 +8,20 @@ import { SandboxMessage, ResponseMessage } from './sanbox-messages';
 
 
 
+
 // When it receives a message about what command to execute it executes it and returns the result
 process.on('message', (msg: SandboxMessage) => {
     let initialCPUUsage = process.cpuUsage();
     let initialMemUsage = process.memoryUsage();
     console.log(`running ${msg.cmd} with ${msg.arguments}`);
+    console.log(`env ${util.inspect(msg.envVariables)}`);
+    let processEnv = process.env;
 
-    let cp: ChildProcess = spawn(msg.cmd, msg.arguments, {env: msg.envVariables});
+    processEnv = Object.assign(processEnv, msg.envVariables);
+
+
+    let cp: ChildProcess = spawn(msg.cmd, msg.arguments, {env: processEnv});
+    
 
     //write to stdin
     writeToStdin(cp, msg.stdin);
@@ -55,6 +64,7 @@ process.on('message', (msg: SandboxMessage) => {
                     stdout: result[1].slice(0,msg.stdoutLimit),
                     exitCode: exitCode,
                     signal: signal,
+                    debuggerReportFile : `${msg.cmd}.log.${cp.pid}`,
                     memoryUsage: memUsage.rss - initialMemUsage.rss,
                     cpuUsage: process.cpuUsage(initialCPUUsage).user
                 }
