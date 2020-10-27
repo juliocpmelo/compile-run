@@ -1,11 +1,12 @@
-const util = require('util');
 
 import { spawn, ChildProcess } from 'child_process';
 import { writeToStdin } from './util/sdtin-write';
 import { streamDataToString } from './util/stream-to-string';
 import { Result, ErrorType } from '../types';
 import { SandboxMessage, ResponseMessage } from './sanbox-messages';
+import { inspect } from 'util';
 
+import { existsSync } from 'fs';
 
 
 
@@ -13,8 +14,8 @@ import { SandboxMessage, ResponseMessage } from './sanbox-messages';
 process.on('message', (msg: SandboxMessage) => {
     let initialCPUUsage = process.cpuUsage();
     let initialMemUsage = process.memoryUsage();
-    console.log(`running ${msg.cmd} with ${msg.arguments}`);
-    console.log(`env ${util.inspect(msg.envVariables)}`);
+    //console.log(`running ${msg.cmd} with ${msg.arguments}`);
+    //console.log(`env ${inspect(msg.envVariables)}`);
     let processEnv = process.env;
 
     processEnv = Object.assign(processEnv, msg.envVariables);
@@ -31,23 +32,23 @@ process.on('message', (msg: SandboxMessage) => {
     resultPromise.push(streamDataToString(cp.stdout));
     let pr = Promise.all(resultPromise);
     let stdoutSize = 0, stdoutErrSize = 0;
-    let errorType : ErrorType;
+    let errorType : ErrorType | undefined = undefined;
 
     let killTimerId = setTimeout(() => {
-        cp.kill('SIGINT');
+        cp.kill('SIGKILL');
         errorType = ErrorType.RUN_TIMEOUT;
     }, msg.timeout);
     cp.stdout.on('data', (data : string) => {
         stdoutSize += data.length;
         if(stdoutSize > msg.stdoutLimit){
-            cp.kill('SIGINT');
+            cp.kill('SIGKILL');
             errorType = ErrorType.RUN_STDOUT_OVERFLOW;
         }
     });
     cp.stderr.on('data', (data : string) => {
         stdoutErrSize += data.length;
         if(stdoutErrSize > msg.stderrLimit){
-            cp.kill('SIGINT');
+            cp.kill('SIGKILL');
             errorType = ErrorType.RUN_STDERR_OVERFLOW;
         }
     });
@@ -59,19 +60,26 @@ process.on('message', (msg: SandboxMessage) => {
                 return result;
             })
             .then((result: string[]) => {
+                let debuggerReportFile : string | undefined = `${msg.cmd}.log.${cp.pid}`;
+                if(!existsSync(debuggerReportFile)){
+                    debuggerReportFile = undefined;
+                }
+                else if(!errorType){
+                    errorType = ErrorType.RUN_TIME;
+                }
+                
                 let res : Result = {
                     stderr: result[0].slice(0,msg.stderrLimit),
                     stdout: result[1].slice(0,msg.stdoutLimit),
                     exitCode: exitCode,
                     signal: signal,
-                    debuggerReportFile : `${msg.cmd}.log.${cp.pid}`,
+                    debuggerReportFile: debuggerReportFile,
                     memoryUsage: memUsage.rss - initialMemUsage.rss,
                     cpuUsage: process.cpuUsage(initialCPUUsage).user,
+                    errorType : errorType,
                     files : []
                 }
-                if(errorType){
-                    res.errorType = errorType;
-                }
+                //console.log('error type ' + cp.pid + ' - ' + errorType);
                 return res;
             })
             .then((result: Result) => {
