@@ -1,7 +1,7 @@
 import { Result, Options, errorResultCallback } from "../types";
 import { multipleArgsCallbackifier } from "../box/util/helper";
-import { compileCSource } from "./compile-source";
-import { runExecutable } from "../executable/execute-executable";
+import { writeSourceFile } from "../source-writer";
+import { runCFile } from './run-file';
 
 /**
  * Runs a C source code provided as string
@@ -31,8 +31,8 @@ export async function runCSource(sourceCode: string, ...args: any[]): Promise<Re
 
 export async function runCSourceAndReturnPromise(sourceCode: string, options?: Options): Promise<Result> {
     try {
-        let executablePath = await compileCSource(sourceCode, options);
-        return runExecutable(executablePath, options);
+        let filePath = await writeSourceFile('c', sourceCode);
+        return runCFile(filePath, options);
     }
     catch (err) {
         return err;
