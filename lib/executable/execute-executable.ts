@@ -17,11 +17,11 @@ export async function runExecutable(filePath: string, options?: C_Options | CPP_
   
   let res = await execute(filePath, options);
   
-  if(res.signal === 'SIGTERM'){ //probably timeout or killed by SO somehow (e.g timeout, bufferoverflow and others)
+  if(res.signal === 'SIGKILL'){ //probably timeout or killed by SO somehow (e.g timeout, bufferoverflow and others)
     if(!res.errorType)
       res.errorType = ErrorType.RUN_TIME;
   }
-  else{ //probably seg fault and other memory/pagination issues (e.g 'SIGSEGV' and others)
+  else if(res.signal){ //probably seg fault and other memory/pagination issues (e.g 'SIGSEGV' and others)
     res.errorType = ErrorType.RUN_TIME;
   }
 
