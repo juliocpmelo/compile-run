@@ -23,7 +23,7 @@ export async function compileCpp(filePath: string, options?: CPP_Options): Promi
     let compilerArgs: string[] = [filePath, '-o', executablePath];
 
     if(options && options.addressSanitizer){ //enables address sanitizer, works on both clang and gcc
-        compilerArgs.concat(['-g', '-fsanitize=address']);
+        compilerArgs = compilerArgs.concat(['-g', '-fsanitize=address']);
     }
     
     compilerArgs = compilerArgs.concat(options && options.compilerArgs ? options.compilerArgs : []);
