@@ -35,6 +35,14 @@ export async function runCppFile(filePath: string, ...args: any[]): Promise<Resu
 export async function runCppFileAndReturnPromise(filePath: string, options?: CPP_Options): Promise<Result> {
     try {
         let executablePath = await compileCpp(filePath, options);
+
+        if (options && options.addressSanitizer){
+            if(options.envVariables)
+                options.envVariables.ASAN_OPTIONS = `log_path=${executablePath}.log`;
+            else
+                options.envVariables = { ASAN_OPTIONS : `log_path=${executablePath}.log` };
+        }
+        
         return runExecutable(executablePath, options).then( (res : Result) => {
                                                                 res.files.push(filePath);
                                                                 return res;
