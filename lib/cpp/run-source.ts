@@ -1,7 +1,8 @@
 import { Result, Options, errorResultCallback } from "../types";
 import { multipleArgsCallbackifier } from "../box/util/helper";
-import { compileCppSource } from "./compile-source";
-import { runExecutable } from "../executable/execute-executable";
+
+import { writeSourceFile } from "../source-writer";
+import { runCppFile } from './run-file';
 
 /**
  * Runs a Cpp source code provided as string
@@ -31,8 +32,8 @@ export async function runCppSource(sourceCode: string, ...args: any[]): Promise<
 
 export async function runCppSourceAndReturnPromise(sourceCode: string, options?: Options): Promise<Result> {
     try {
-        let executablePath = await compileCppSource(sourceCode, options);
-        return runExecutable(executablePath, options);
+        let filePath = await writeSourceFile('cpp', sourceCode);
+        return runCppFile(filePath, options);
     }
     catch (err) {
         return err;
