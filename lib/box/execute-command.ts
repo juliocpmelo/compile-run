@@ -35,7 +35,7 @@ export function execute(cmd: string, ...args: any[]): Promise<Result> {
         if (args[0] && args[0] instanceof Array) {
             
             arr = args[0];
-            console.log(`arguments ${arr}`)
+            //console.log(`arguments ${arr}`)
             if (args[1] && typeof args[1] === 'object') {
                 options = args[1];
             }
