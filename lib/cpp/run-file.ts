@@ -35,7 +35,10 @@ export async function runCppFile(filePath: string, ...args: any[]): Promise<Resu
 export async function runCppFileAndReturnPromise(filePath: string, options?: CPP_Options): Promise<Result> {
     try {
         let executablePath = await compileCpp(filePath, options);
-        return runExecutable(executablePath, options);
+        return runExecutable(executablePath, options).then( (res : Result) => {
+                                                                res.files.push(filePath);
+                                                                return res;
+                                                            });
     }
     catch (err) {
         return err;

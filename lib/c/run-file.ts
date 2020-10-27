@@ -39,9 +39,13 @@ export async function runCFileAndReturnPromise(filePath: string, options?: C_Opt
             else
                 options.envVariables = { ASAN_OPTIONS : `log_path=${executablePath}.log` };
         }
-        return runExecutable(executablePath, options);
+        
+        return runExecutable(executablePath, options).then( (res : Result) => {
+                                                                res.files.push(filePath);
+                                                                return res;
+                                                            });
     }
     catch (err) {
         return err;
     }
-}
+};

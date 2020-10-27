@@ -66,7 +66,8 @@ process.on('message', (msg: SandboxMessage) => {
                     signal: signal,
                     debuggerReportFile : `${msg.cmd}.log.${cp.pid}`,
                     memoryUsage: memUsage.rss - initialMemUsage.rss,
-                    cpuUsage: process.cpuUsage(initialCPUUsage).user
+                    cpuUsage: process.cpuUsage(initialCPUUsage).user,
+                    files : []
                 }
                 if(errorType){
                     res.errorType = errorType;

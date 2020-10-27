@@ -1,3 +1,7 @@
+
+/**
+ * No string based Error Type so check wont fail because of typos
+ */
 export enum ErrorType{
     COMPILE_TIME = 'compile-time',
     RUN_TIME = 'run-time',
@@ -11,6 +15,12 @@ export interface Result {
     stdout: string;
     stderr: string;
     exitCode: number;
+
+    /**
+     * path of the files that were processed in this execution
+     */
+    files: string[];
+    
     /**
      * Memory used by program in Bytes
      */
