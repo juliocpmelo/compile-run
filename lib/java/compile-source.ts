@@ -42,7 +42,7 @@ function getPublicClassName(source: string): string {
             memoryUsage: 0,
             cpuUsage:0,
             stdout: '',
-            stderr: 'Invalid public class',
+            stderr: 'No public class found',
             signal: '',
             exitCode: 3,
             errorType: ErrorType.COMPILE_TIME
