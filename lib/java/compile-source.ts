@@ -1,4 +1,4 @@
-import { Options } from "../types";
+import { Result, ErrorType, Options } from "../types";
 import path from 'path';
 import { writeSource } from '../source-writer/read-write-util';
 import { setupJavaDir } from "./setup";
@@ -15,8 +15,8 @@ export async function compileJavaSource(source: string, options?: Options): Prom
     try {
         publicClass = getPublicClassName(source);
     }
-    catch (err) {
-        return err;
+    catch (err) { //no public class error
+        throw err;
     }
     let fileName = `${publicClass}.java`;
     let filePath = path.join(dirPath, fileName);
@@ -36,11 +36,17 @@ function getPublicClassName(source: string): string {
         return res[1];
     }
     else {
-        throw {
+        let errorRes:Result;
+        errorRes ={
+            files: [],
+            memoryUsage: 0,
+            cpuUsage:0,
             stdout: '',
             stderr: 'Invalid public class',
+            signal: '',
             exitCode: 3,
-            errorType: 'pre-compile-time'
-        };
+            errorType: ErrorType.COMPILE_TIME
+        }
+        throw errorRes;
     }
 }
