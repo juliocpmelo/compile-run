@@ -30,9 +30,44 @@ export async function compileJavaSource(source: string, options?: Options): Prom
  * @param source 
  */
 function getPublicClassName(source: string): string {
-    const re = /public\sclass\s([A-Za-z0-9]+)\s*{/gm;
+
+    let javakeywords = [
+    "abstract",     "assert",        "boolean",      "break",           "byte",
+    "case",         "catch",         "char",         "class",           "const",
+    "continue",     "default",       "do",           "double",          "else",
+    "enum",         "extends",       "false",        "final",           "finally",
+    "float",        "for",           "goto",         "if",              "implements",
+    "import",       "instanceof",    "int",          "interface",       "long",
+    "native",       "new",           "null",         "package",         "private",
+    "protected",    "public",        "return",       "short",           "static",
+    "strictfp",     "super",         "switch",       "synchronized",    "this",
+    "throw",        "throws",        "transient",    "true",            "try",
+    "void",         "volatile",      "while"
+    ]
+    
+
+    const re = /public\s.*class\s+([A-Za-z_$]+[a-zA-Z0-9_$]*).*{/gm;
+    
     let res = re.exec(source);
+    console.log(res);
+
     if (res) {
+        for (let keyword of javakeywords){
+            if(res[1] === keyword){
+                let errorRes:Result;
+                errorRes ={
+                    files: [],
+                    memoryUsage: 0,
+                    cpuUsage:0,
+                    stdout: '',
+                    stderr: `Class name can't be ${res[1]}`,
+                    signal: '',
+                    exitCode: 3,
+                    errorType: ErrorType.COMPILE_TIME
+                }
+                throw errorRes;
+            }
+        }
         return res[1];
     }
     else {
