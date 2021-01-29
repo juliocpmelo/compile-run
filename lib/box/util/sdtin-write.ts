@@ -11,7 +11,7 @@ export function writeToStdin(proc: ChildProcess, stdin: string): void {
             // Ignore input if stream is already closed
             return;
         });
-        proc.stdin.write(stdin + '\r\n', err => {
+        proc.stdin.write(stdin, err => {
             if (!err) {
                 proc.stdin.end();
             }
