@@ -1,4 +1,4 @@
-import { Options, Result } from "../types";
+import { Options, Result, ErrorType } from "../types";
 import { ChildProcess, spawn } from "child_process";
 import path from 'path';
 
@@ -69,7 +69,22 @@ export function execute(cmd: string, ...args: any[]): Promise<Result> {
         p.send(msg);
         p.on('message', (msg: ResponseMessage) => {
             if (msg.status == 'success') {
-                res(msg.executionResult);
+                if(msg.executionResult)
+                    res(msg.executionResult);
+                else{
+                    let errorRes:Result;
+                    errorRes ={
+                        files: [],
+                        memoryUsage: 0,
+                        cpuUsage:0,
+                        stdout: '',
+                        stderr: 'The runner returned a Null Result',
+                        signal: '',
+                        exitCode: 3,
+                        errorType: ErrorType.RUN_TIME
+                    }
+                    res(errorRes);
+                }
             }
             else {
                 rej(msg.error);
