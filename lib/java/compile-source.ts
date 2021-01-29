@@ -46,9 +46,10 @@ function getPublicClassName(source: string): string {
     ]
     
 
-    const re = /public\s.*class\s+([A-Za-z_$]+[a-zA-Z0-9_$]*).*{/gm;
+    const re = /public\s+class\s+([A-Za-z_$]+[a-zA-Z0-9_$]*)\s*{/gm;
     
     let res = re.exec(source);
+
 
     if (res) {
         for (let keyword of javakeywords){
